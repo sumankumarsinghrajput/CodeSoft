@@ -1,0 +1,123 @@
+#include <stdio.h>
+
+char board[3][3];
+char currentPlayer;
+
+// Function prototypes
+void initializeBoard();
+void displayBoard();
+int isValidMove(int row, int col);
+int checkWin();
+int checkDraw();
+void switchPlayer();
+
+int main() {
+    int row, col;
+    int playAgain = 1;
+
+    while (playAgain) {
+        // Initialize the game
+        initializeBoard();
+        currentPlayer = 'X';
+
+        // Game loop
+        while (1) {
+            displayBoard();
+            printf("Player %c, enter your move (row and column): ", currentPlayer);
+            scanf("%d %d", &row, &col);
+
+            if (isValidMove(row, col)) {
+                board[row][col] = currentPlayer;
+                if (checkWin()) {
+                    displayBoard();
+                    printf("Player %c wins!\n", currentPlayer);
+                    break;
+                } else if (checkDraw()) {
+                    displayBoard();
+                    printf("It's a draw!\n");
+                    break;
+                }
+                switchPlayer();
+            } else {
+                printf("Invalid move! Try again.\n");
+            }
+        }
+
+        // Ask if the players want to play again
+        printf("Do you want to play again? (1 for Yes / 0 for No): ");
+        scanf("%d", &playAgain);
+    }
+
+    return 0;
+}
+
+// Initialize the board with empty spaces
+void initializeBoard() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            board[i][j] = ' ';
+        }
+    }
+}
+
+// Display the current state of the board
+void displayBoard() {
+    printf("\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf(" %c ", board[i][j]);
+            if (j < 2) printf("|");
+        }
+        printf("\n");
+        if (i < 2) printf("---|---|---\n");
+    }
+    printf("\n");
+}
+
+// Check if a move is valid
+int isValidMove(int row, int col) {
+    if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
+        return 1;
+    }
+    return 0;
+}
+
+// Check if the current player has won
+int checkWin() {
+    // Check rows and columns
+    for (int i = 0; i < 3; i++) {
+        if ((board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) ||
+            (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer)) {
+            return 1;
+        }
+    }
+
+    // Check diagonals
+    if ((board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) ||
+        (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer)) {
+        return 1;
+    }
+
+    return 0;
+}
+
+// Check if the game is a draw
+int checkDraw() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == ' ') {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+// Switch the current player
+void switchPlayer() {
+    if (currentPlayer == 'X') {
+        currentPlayer = 'O';
+    } else {
+        currentPlayer = 'X';
+    }
+}
